@@ -59,6 +59,14 @@ function selectTextShapeInTheCenter() {
 	// Click on the center of the slide to select the text shape there
 	cy.cGet('#document-container')
 		.then(function(items) {
+			cy.cGet('body').then ((body) => {
+				var cursor = body[0].querySelectorAll('.leaflet-cursor.blinking-cursor');
+				if (cursor.length) {
+					expect(items).to.have.length(2);
+				} else {
+					expect(items).to.have.length(1);
+				}
+			});
 			expect(items).to.have.length(1);
 			var XPos = (items[0].getBoundingClientRect().left + items[0].getBoundingClientRect().right) / 2;
 			var YPos = (items[0].getBoundingClientRect().top + items[0].getBoundingClientRect().bottom) / 2;

@@ -1897,6 +1897,14 @@ export class CommentSection extends CanvasSectionObject {
 			{
 				if (!parentCommentList.includes(comment.sectionProperties.data.parent))
 					parentCommentList.push(comment.sectionProperties.data.parent);
+			} else if (i - 1 >= 0
+				&& comment.position[0] === this.sectionProperties.commentList[i-1].position[0]
+				&& comment.position[1] === this.sectionProperties.commentList[i-1].position[1]) {
+					if (!this.sectionProperties.commentList[i-1].sectionProperties.children.includes(comment)){
+						this.sectionProperties.commentList[i-1].sectionProperties.children.push(comment)
+						if (comment.sectionProperties.data.parent === '0')
+							comment.sectionProperties.data.parent = this.sectionProperties.commentList[i-1].sectionProperties.data.id;
+					}
 			}
 		}
 
@@ -1912,6 +1920,7 @@ export class CommentSection extends CanvasSectionObject {
 			if (parentComment) {
 				for (var j = 0; j < this.sectionProperties.commentList.length; j++) {
 					if (this.sectionProperties.commentList[j].sectionProperties.data.parent === parentCommentList[i])
+						if (!parentComment.sectionProperties.children.includes(this.sectionProperties.commentList[j]))
 						parentComment.sectionProperties.children.push(this.sectionProperties.commentList[j]);
 				}
 			}

@@ -3,7 +3,7 @@
 
   var invalidProtocolRegex = /^([^\w]*)(javascript|data|vbscript)/im;
   var htmlEntitiesRegex = /&#(\w+)(^\w|;)?/g;
-  var htmlCtrlEntityRegex = /&(newline|tab);/gi;
+  var htmlCtrlEntityRegex = /&(\n|\t);/gi;
   var ctrlCharactersRegex = /[\u0000-\u001F\u007F-\u009F\u2000-\u200D\uFEFF]/gim;
   var urlSchemeRegex = /^.+(:|&colon;)/gim;
   var relativeFirstCharacters = [".", "/"];

@@ -621,6 +621,9 @@ L.Clipboard = L.Class.extend({
 	},
 
 	_beforeSelectImpl: function() {
+		if (this._map._docLayer._preview.partsFocused)
+			return;
+
 		// We need some spaces in there ...
 		this._resetDiv();
 
@@ -1081,6 +1084,8 @@ L.Clipboard = L.Class.extend({
 	},
 
 	_doCopyCut: function(ev, unoName) {
+		if (this._map._docLayer._preview.partsFocused)
+			this._map.sendUnoCommand('.uno:CopySlide');
 		window.app.console.log(unoName);
 
 		if (this._isAnyInputFieldSelected(unoName === 'Copy'))
@@ -1146,6 +1151,11 @@ L.Clipboard = L.Class.extend({
 			return;
 
 		window.app.console.log('Paste');
+
+		if (this._map._docLayer._preview.partsFocused) {
+			this._map.sendUnoCommand('.uno:PasteSlide');
+			return;
+		}
 
 		if (this._isAnyInputFieldSelected() && !this._isFormulabarSelected())
 			return;

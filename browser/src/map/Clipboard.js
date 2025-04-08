@@ -621,7 +621,7 @@ L.Clipboard = L.Class.extend({
 	},
 
 	_beforeSelectImpl: function() {
-		if (this._map._docLayer._preview.partsFocused)
+		if (this._map.getDocType() === 'presentation' && this._map._docLayer._preview.partsFocused)
 			return;
 
 		// We need some spaces in there ...
@@ -815,8 +815,7 @@ L.Clipboard = L.Class.extend({
 
 	// Gets status of a copy/paste command from the remote Kit
     _onCommandResult: function(e) {
-        if (e.commandName === '.uno:Copy' || e.commandName === '.uno:Cut' || e.commandName === '.uno:CopyHyperlinkLocation')
-		{
+        if (e.commandName === '.uno:Copy' || e.commandName === '.uno:Cut' || e.commandName === '.uno:CopyHyperlinkLocation' || e.commandName === '.uno:CopySlide') {
 			window.app.console.log('Resolve clipboard command promise ' + e.commandName);
 			while (this._commandCompletion.length > 0)
 			{
@@ -827,7 +826,7 @@ L.Clipboard = L.Class.extend({
 	},
 
 	_sendCommandAndWaitForCompletion: function(command, params) {
-		if (command !== '.uno:Copy' && command !== '.uno:Cut' && command !== '.uno:CopyHyperlinkLocation') {
+		if (command !== '.uno:Copy' && command !== '.uno:Cut' && command !== '.uno:CopyHyperlinkLocation' && command !== '.uno:CopySlide') {
 			console.error(`_sendCommandAndWaitForCompletion was called with '${command}', but anything except Copy or Cut will never complete`);
 			return null;
 		}
@@ -1071,7 +1070,7 @@ L.Clipboard = L.Class.extend({
 			this._execCopyCutPaste('cut', cmd);
 		} else if (cmd === '.uno:Paste') {
 			this._execCopyCutPaste('paste', cmd);
-		} else if (cmd === '.uno:PasteSpecial') {
+		} else if (cmd === '.uno:PasteSpecial' || cmd === '.uno:PasteSlide') {
 			if (this._navigatorClipboardRead(true)) {
 				return true;
 			}
@@ -1084,8 +1083,14 @@ L.Clipboard = L.Class.extend({
 	},
 
 	_doCopyCut: function(ev, unoName) {
-		if (this._map._docLayer._preview.partsFocused)
-			this._map.sendUnoCommand('.uno:CopySlide');
+		if (this._map.getDocType() === 'presentation' && this._map._docLayer._preview.partsFocused) {
+			this._unoCommandForCopyCutPaste = `.uno:CopySlide`;
+			this._navigatorClipboardWrite()
+			// this._map.sendUnoCommand('.uno:CopySlide');
+			// this.populateClipboard(ev);
+			return;
+
+		}
 		window.app.console.log(unoName);
 
 		if (this._isAnyInputFieldSelected(unoName === 'Copy'))
@@ -1152,7 +1157,7 @@ L.Clipboard = L.Class.extend({
 
 		window.app.console.log('Paste');
 
-		if (this._map._docLayer._preview.partsFocused) {
+		if (this._map.getDocType() === 'presentation' && this._map._docLayer._preview.partsFocused) {
 			this._map.sendUnoCommand('.uno:PasteSlide');
 			return;
 		}

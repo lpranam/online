@@ -232,10 +232,12 @@ L.Control.PartsPreview = L.Control.extend({
 		var that = this;
 		img.onfocus = function () {
 			that.partsFocused = true;
+			that._map._clip.setTextSelectionType('text');
 		}
 
 		img.onblur = function () {
 			that.partsFocused = false;
+			that._map._clip.clearSelection();
 		}
 
 		var that = this;
@@ -309,9 +311,9 @@ L.Control.PartsPreview = L.Control.extend({
 						callback: function() {
 							that._map.sendUnoCommand('.uno:PasteSlide');
 						},
-						visible: function() {
-							return app.map.stateChangeHandler.getItemValue('.uno:PasteSlide') === 'enabled';
-						}
+						// visible: function() {
+						// 	return app.map.stateChangeHandler.getItemValue('.uno:PasteSlide') === 'enabled';
+						// }
 					},
 					newslide: {
 						name: _UNO(that._map._docLayer._docType == 'presentation' ? '.uno:InsertSlide' : '.uno:InsertPage', 'presentation'),

@@ -1979,6 +1979,7 @@ void ClientSession::postProcessCopyPayload(const std::shared_ptr<Message>& paylo
     // Insert our meta origin if we can
     payload->rewriteDataBody([this](std::vector<char>& data) {
             std::string_view sv(data.data(), data.size());
+            // std::cout << "ClientSession::postProcessCopyPayload: " << sv << std::endl;
             if (sv.starts_with("clipboardcontent: content\ntext/plain"))
             {
                 // Single format and it's plain text (not HTML): no need to rewrite anything.
